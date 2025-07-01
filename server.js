@@ -1,0 +1,48 @@
+require('dotenv').config()
+const express = require('express')
+const mongoose = require('mongoose')
+const morgan = require('morgan')
+const { expressjwt } = require('express-jwt')
+const errorHandler = require('./middleware/errorHandler')
+
+const authRouter = require('./routes/authRouter')
+const campsiteRouter = require('./routes/campsiteRouter')
+
+const app = express()
+
+// Middleware
+app.use(express.json())
+app.use(morgan('dev'))
+
+// Connect to DB- Mongo
+async function connectToDb() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI)
+    console.log('Connected to MongoDB')
+  } catch (err) {
+    console.error('MongoDB connection error:', err)
+  }
+}
+connectToDb()
+
+// Routes
+app.use('/api/auth', authRouter)
+
+// Protect routes below with JWT
+app.use(
+  '/api/main',
+  expressjwt({ secret: process.env.SECRET, algorithms: ['HS256'] })
+)
+//campsite functionality
+app.use('/api/main/campsites', campsiteRouter)
+
+// Global error handler
+app.use(errorHandler)
+
+// Start server
+const PORT = process.env.PORT || 6666
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
+
+
