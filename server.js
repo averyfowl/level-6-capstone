@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const morgan = require('morgan')
 const { expressjwt } = require('express-jwt')
 const errorHandler = require('./middleware/errorHandler')
+const path = require('path')
 
 const authRouter = require('./routes/authRouter')
 const campsiteRouter = require('./routes/campsiteRouter')
@@ -13,6 +14,7 @@ const app = express()
 // Middleware
 app.use(express.json())
 app.use(morgan('dev'))
+// app.use(express.static(path.join(__dirname, "client", "dist")))
 
 // Connect to DB- Mongo
 async function connectToDb() {
@@ -38,6 +40,15 @@ app.use('/api/main/campsites', campsiteRouter)
 
 // Global error handler
 app.use(errorHandler)
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'client', 'dist')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+  });
+}
+
 
 // Start server
 const PORT = process.env.PORT || 6666

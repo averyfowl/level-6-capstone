@@ -1,2 +1,6 @@
 .env
+client/node_modules/
 node_modules/
+dist/
+level-6-capstone.git.bfg-report/
+level-6-capstone.git/
