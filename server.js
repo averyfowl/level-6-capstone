@@ -14,7 +14,12 @@ const app = express()
 // Middleware
 app.use(express.json())
 app.use(morgan('dev'))
-// app.use(express.static(path.join(__dirname, "client", "dist")))
+// Serve frontend
+app.use(express.static(path.join(__dirname, 'client', 'dist')))
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'))
+})
+
 
 // Connect to DB- Mongo
 async function connectToDb() {
