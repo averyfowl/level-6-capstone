@@ -14,6 +14,7 @@ const app = express()
 // Middleware
 app.use(express.json())
 app.use(morgan('dev'))
+app.use(express.static(path.join(_dirname, "client", "dist")))
 
 // Connect to DB
 async function connectToDb() {
@@ -40,14 +41,8 @@ app.use('/api/main/campsites', campsiteRouter)
 // Global error handler
 app.use(errorHandler)
 
-// Serve frontend in production ONLY and AFTER api routes
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'client', 'dist')))
+app.get("*", (req, res) => res.sendFile(path.join(_dirname, "client", "dist", "index.html")))
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'))
-  })
-}
 
 // Start server
 const PORT = process.env.PORT || 6666
