@@ -16,7 +16,7 @@ app.use(express.json())
 app.use(morgan('dev'))
 app.use(express.static(path.join(__dirname, "client", "dist")))
 
-// Connect to DB
+// Connect to DB- Mongo
 async function connectToDb() {
   try {
     await mongoose.connect(process.env.MONGO_URI)
@@ -30,19 +30,26 @@ connectToDb()
 // Routes
 app.use('/api/auth', authRouter)
 
-// Protect routes below with JWT
-app.use(
-  '/api/main',
-  expressjwt({ secret: process.env.SECRET, algorithms: ['HS256'] })
-)
-// Campsite functionality
-app.use('/api/main/campsites', campsiteRouter)
+const jwt = expressjwt({ secret: process.env.SECRET, algorithms: ['HS256'] })
+
+app.use('/api/main/campsites', jwt, campsiteRouter)
+
+
+// // Protect routes below with JWT *******************
+// app.use(
+//   '/api/main',
+//   expressjwt({ secret: process.env.SECRET, algorithms: ['HS256'] })
+// )
+// //campsite functionality
+// app.use('/api/main/campsites', campsiteRouter)
 
 // Global error handler
 app.use(errorHandler)
 
-app.get("*", (req, res) => res.sendFile(path.join(__dirname, "client", "dist", "index.html")))
-
+// app.get("/*", (req, res) => res.sendFile(path.join(__dirname, "client", "dist", "index.html")))
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"))
+})
 
 // Start server
 const PORT = process.env.PORT || 6666
