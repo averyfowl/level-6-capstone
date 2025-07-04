@@ -30,26 +30,18 @@ connectToDb()
 // Routes
 app.use('/api/auth', authRouter)
 
-const jwt = expressjwt({ secret: process.env.SECRET, algorithms: ['HS256'] })
-
-app.use('/api/main/campsites', jwt, campsiteRouter)
-
-
-// // Protect routes below with JWT *******************
-// app.use(
-//   '/api/main',
-//   expressjwt({ secret: process.env.SECRET, algorithms: ['HS256'] })
-// )
-// //campsite functionality
-// app.use('/api/main/campsites', campsiteRouter)
+// Protect routes below with JWT
+app.use(
+  '/api/main',
+  expressjwt({ secret: process.env.SECRET, algorithms: ['HS256'] })
+)
+//campsite functionality
+app.use('/api/main/campsites', campsiteRouter)
 
 // Global error handler
 app.use(errorHandler)
 
-// app.get("/*", (req, res) => res.sendFile(path.join(__dirname, "client", "dist", "index.html")))
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "dist", "index.html"))
-})
+app.get("*", (req, res) => res.sendFile(path.join(__dirname, "client", "dist", "index.html")))
 
 // Start server
 const PORT = process.env.PORT || 6666
