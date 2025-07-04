@@ -44,7 +44,7 @@ app.use(errorHandler)
 app.get("*", (req, res) => res.sendFile(path.join(__dirname, "client", "dist", "index.html")))
 
 // Start server
-const PORT = process.env.PORT || 6666
+const PORT = process.env.PORT || 7777
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
